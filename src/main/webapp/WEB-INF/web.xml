@@ -15,4 +15,8 @@
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+    
+    <listener>
+        <listener-class>nl.stoux.posrs.ContextListener</listener-class>
+    </listener>
 </web-app>
