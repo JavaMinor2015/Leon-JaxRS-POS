@@ -6,8 +6,12 @@ import nl.stoux.posrs.Util.Globals;
 import nl.stoux.posrs.Util.Methods;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +65,7 @@ public abstract class CrudService<Identifier extends Comparable<Identifier>, Obj
 
     @PUT
     @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response updateOne(@PathParam("id") Identifier id, @FormParam("values") String json) {
         return updateFields(id, json);
     }
@@ -76,7 +81,7 @@ public abstract class CrudService<Identifier extends Comparable<Identifier>, Obj
 
     @POST
     public Response createOne(@FormParam("values") String json) {
-        ObjectType o = Globals.gson.fromJson(json, createClass());
+        ObjectType o = Globals.getGson().fromJson(json, createClass());
         Identifier id = o.getId();
 
         Map<Identifier, ObjectType> map = getMap();

@@ -75,7 +75,7 @@ public abstract class BaseService<Identifier, ObjectType> implements ResponseMix
         return base;
     }
 
-    protected abstract Map<Identifier, ObjectType> getMap();
+    public abstract Map<Identifier, ObjectType> getMap();
 
     /**
      * Update fields of an object
@@ -85,7 +85,7 @@ public abstract class BaseService<Identifier, ObjectType> implements ResponseMix
      */
     protected Response updateFields(Identifier id, final String newValuesAsJson) {
         return useItem(id, objectType -> {
-            HashMap<?, ?> newValues = Globals.gson.fromJson(newValuesAsJson, HashMap.class);
+            HashMap<?, ?> newValues = Globals.getGson().fromJson(newValuesAsJson, HashMap.class);
             HashMap<String, String> updatedFields = updateFields(objectType, newValues);
             return Response.ok(Methods.asMap("result", "ok", "modified", updatedFields)).build();
         });

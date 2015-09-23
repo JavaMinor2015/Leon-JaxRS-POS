@@ -38,7 +38,7 @@ public class ProductService extends CrudService<Integer, Product> {
 
 
     @Override
-    protected Map<Integer, Product> getMap() {
+    public Map<Integer, Product> getMap() {
         return ProductService.productMap;
     }
 

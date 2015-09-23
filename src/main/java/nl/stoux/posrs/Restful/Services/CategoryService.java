@@ -16,9 +16,14 @@ import java.util.Map;
 public class CategoryService extends CrudService<Integer, Category> {
 
     private static HashMap<Integer, Category> categories = new HashMap<>();
+    static {
+        for (int i = 0; i < 30; i++) {
+            categories.put(i, new Category(i, "A" + i));
+        }
+    }
 
     @Override
-    protected Map<Integer, Category> getMap() {
+    public Map<Integer, Category> getMap() {
         return CategoryService.categories;
     }
 

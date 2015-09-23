@@ -1,10 +1,7 @@
 package nl.stoux.posrs.Domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import nl.stoux.posrs.Domain.Abs.CrudModel;
-import nl.stoux.posrs.Domain.Annotations.SubModel;
 
 import java.util.Set;
 
@@ -13,14 +10,16 @@ import java.util.Set;
  */
 @Getter @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Product implements CrudModel<Integer> {
 
     public static final String URL = "/products";
 
-    private final Integer id;
-    private final String name;
+    @Setter(AccessLevel.NONE) private Integer id;
+    @Setter(AccessLevel.NONE) private String name;
+
     private double price;
-    @SubModel private Category category;
+    private Category category;
 
     private Set<String> barcodes;
 
