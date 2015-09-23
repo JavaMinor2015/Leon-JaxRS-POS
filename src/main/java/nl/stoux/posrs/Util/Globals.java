@@ -16,6 +16,7 @@ public class Globals {
             .registerTypeAdapter(Product.class, new ModelSerializer())
             .registerTypeAdapter(Category.class, new ModelSerializer())
             .setPrettyPrinting()
+            .disableHtmlEscaping()
             .create();
 
 }

@@ -1,5 +1,7 @@
 package nl.stoux.posrs.Util;
 
+import nl.stoux.posrs.Domain.Abs.CrudModel;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +21,20 @@ public class Methods {
             map.put(args[i], args[i + 1]);
         }
         return map;
+    }
+
+    /**
+     * Get the base URL of a CrudModel
+     * @param model The model's class
+     * @return The base URL
+     */
+    public static String getModelURL(Class<? extends CrudModel> model) {
+        try {
+            return (String) model.getDeclaredField("URL").get(null);
+        } catch (Exception e) {
+            System.out.println("Failed to get URL: " + e.getMessage());
+            return "";
+        }
     }
 
 }
