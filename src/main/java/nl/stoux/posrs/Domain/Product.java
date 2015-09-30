@@ -10,13 +10,12 @@ import java.util.Set;
  */
 @Getter @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class Product implements CrudModel<Integer> {
 
     public static final String URL = "/products";
 
-    @Setter(AccessLevel.NONE) private Integer id;
-    @Setter(AccessLevel.NONE) private String name;
+    final private Integer id;
+    final private String name;
 
     private double price;
     private Category category;

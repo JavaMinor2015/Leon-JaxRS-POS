@@ -8,14 +8,11 @@ import nl.stoux.posrs.Domain.Abs.CrudModel;
  */
 @Getter @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class Category implements CrudModel<Integer> {
 
     public static final String URL = "/categories";
 
-    @Setter(AccessLevel.NONE) private Integer id;
+    final private Integer id;
     private String category;
-
-
 
 }
