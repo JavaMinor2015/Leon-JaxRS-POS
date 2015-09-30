@@ -1,6 +1,8 @@
 package nl.stoux.posrs.Domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import nl.stoux.posrs.Domain.Abs.CrudModel;
 
 import java.util.Set;
@@ -22,4 +24,8 @@ public class Product implements CrudModel<Integer> {
 
     private Set<String> barcodes;
 
+    public Product(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

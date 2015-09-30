@@ -1,6 +1,8 @@
 package nl.stoux.posrs.Domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import nl.stoux.posrs.Domain.Abs.CrudModel;
 
 /**
@@ -15,4 +17,7 @@ public class Category implements CrudModel<Integer> {
     final private Integer id;
     private String category;
 
+    public Category(Integer id) {
+        this.id = id;
+    }
 }

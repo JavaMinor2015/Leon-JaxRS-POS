@@ -8,9 +8,8 @@ import nl.stoux.posrs.Util.ExceptionEater;
 import nl.stoux.posrs.Util.Globals;
 
 import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Created by Leon Stam on 23-9-2015.
@@ -18,7 +17,9 @@ import java.util.Optional;
 public class ModelSerializer<Model extends CrudModel> implements JsonSerializer<Model>, JsonDeserializer<Model> {
 
     private Class<Model> modelClass;
+
     private Constructor<Model> clazzConstructor;
+    private String[] constructorArgumentNames;
 
     private String modelURL;
 
@@ -26,26 +27,32 @@ public class ModelSerializer<Model extends CrudModel> implements JsonSerializer<
         this.modelClass = clazz;
         this.modelURL = modelURL;
 
-        clazzConstructor = findSmallestConstructor(clazz);
+        findFinalConstructor();
     }
 
     //Suppress warning for unchecked cast as the clazz cannot have a constructor that doesn't return a Model
     @SuppressWarnings("unchecked")
-    private Constructor<Model> findSmallestConstructor(Class<Model> clazz) {
-        //Find the smallest constructor
-        Constructor<?> smallestConstructor = null;
-        for (Constructor<?> constructor : clazz.getConstructors()) {
-            if (smallestConstructor == null) {
-                smallestConstructor = constructor;
+    private void findFinalConstructor() {
+        List<Field> constructorFields = new ArrayList<>();
+        //Find the final fields
+        for (Field field : modelClass.getDeclaredFields()) {
+            if (!Modifier.isFinal(field.getModifiers())) {
                 continue;
             }
 
-            if (smallestConstructor.getParameterCount() > constructor.getParameterCount()) {
-                smallestConstructor = constructor;
-            }
+            constructorFields.add(field);
         }
-        assert(smallestConstructor != null);
-        return (Constructor<Model>) smallestConstructor;
+
+        //Find the constructor
+        //TODO: Fix to array. Cannot be cast.
+        Class<?>[] constructorArguments = (Class<?>[]) constructorFields.stream().map(Field::getType).toArray();
+        constructorArgumentNames = (String[]) constructorFields.stream().map(Field::getName).toArray();
+        try {
+            clazzConstructor = modelClass.getConstructor(constructorArguments);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new RuntimeException("No constructor found for " + modelClass.getName() + " | ModelSerializer");
+        }
     }
 
 
@@ -58,7 +65,7 @@ public class ModelSerializer<Model extends CrudModel> implements JsonSerializer<
         Arrays.stream(crudModel.getClass().getDeclaredFields())
                 .filter(f -> isUsable(f, true))
                 .forEach(f -> ExceptionEater.eat(
-                        () -> json.add(f.getName(), context.serialize(f.get(crudModel))))
+                                () -> json.add(f.getName(), context.serialize(f.get(crudModel))))
                 );
 
         return json;
@@ -104,11 +111,12 @@ public class ModelSerializer<Model extends CrudModel> implements JsonSerializer<
         Object[] foundParameters = new Object[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             Parameter p = parameters[i];
-            if (!json.has(p.getName())) {
-                throw new JsonParseException("Missing required element: " + p.getName());
+            String argName = constructorArgumentNames[i];
+            if (!json.has(argName)) {
+                throw new JsonParseException("Missing required element: " + argName);
             }
 
-            foundParameters[i] = Globals.getGson().fromJson(json.get(p.getName()), p.getParameterizedType());
+            foundParameters[i] = Globals.getGson().fromJson(json.get(argName), p.getParameterizedType());
         }
 
         return clazzConstructor.newInstance(foundParameters);
