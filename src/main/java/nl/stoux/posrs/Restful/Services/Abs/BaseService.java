@@ -25,7 +25,7 @@ public abstract class BaseService<Identifier, ObjectType> implements ResponseMix
     public static final String FIELD_FAILED = "UPDATE_FAILED";
 
     /** The default not found string */
-    protected String notFoundString = "Not found: {s}";
+    protected String notFoundString = "Not found: {%s}";
 
     /**
      * Try to find an item by it's identifier and use it
